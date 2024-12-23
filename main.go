@@ -10,6 +10,10 @@ import (
 var users []User = []User{{"ionut", "qwer", []byte("salut")}, {"mircea", "asdf", []byte("buna")}}
 
 func registerHandler(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	var body any
+	decoder.Decode(&body)
+	fmt.Println()
 	fmt.Println(r.Body)
 }
 
@@ -32,6 +36,7 @@ func main() {
 	http.HandleFunc("/login", loginHandler)
 	http.HandleFunc("/auth", authHandler)
 	http.HandleFunc("/user", getUser)
+	http.HandleFunc("/register", registerHandler)
 
 	http.ListenAndServe(":8080", nil)
 }
