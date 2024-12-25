@@ -75,24 +75,18 @@
             }
             async function onLogin()
             {
-                const promise = await fetch("http://localhost:8080/auth")
+                const username = document.getElementById("userInput").value
+                const password = document.getElementById("passInput").value
+                const credentials = username + " " + password
+                const promise = await fetch("http://localhost:8080/auth", {
+                    method: "POST",
+                    header: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(credentials)
+                })
                 const text = await promise.text()
-                if (text % 3 == 0)
-                {
-                    document.getElementById("loginMessage").innerHTML = "Login successful";
-                }
-                else if (text % 3 == 1)
-                {
-                    document.getElementById("loginMessage").innerHTML = "Server error.";
-                }
-                else
-                {
-                    document.getElementById("loginMessage").innerHTML = "Username or password invalid.";
-                }
-
-                const promisse = await fetch("http://localhost:8080/user")
-                const texts = await promisse.text()
-                const jsonny = await JSON.parse(texts)
+                const json = await JSON.parse(texts)
                 document.getElementById("dspl").innerHTML = jsonny.Blog
             }
             
