@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+    <head>
+        <title>Wall edit</title>
+        <style>
+            html {
+                line-height: 1.625;
+                color: "light gray";
+                font-family: 'Comic Sans MS';
+                display: table;
+                margin: auto;
+            }
+            body {
+                display: table-cell;
+                vertical-align: center;
+            }
+            div {
+                background-color: lightgray;
+                border: 3px solid black;
+                padding: 30px;
+                width: 300px;
+                margin: 30px;
+            }
+            label {
+                display: inline-block;
+                font-size: larger;
+                text-align: right;
+            }
+            input {
+                display: inline-block;
+            }
+            h1 {
+                color: multicolor;
+            }
+
+
+        </style>
+
+
+    </head>
+
+    <body>
+        <h1 id="title">Edit wall</h1>
+        <div id="wall">
+
+        </div>
+
+    </body>
+
+
+    <script>
+        async function init()
+        {
+            const promise = await fetch("http://localhost:8080/wall", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(localStorage.getItem("token"))
+            })
+            console.log(localStorage.getItem("token"))
+            if (promise.ok)
+            {
+                const wall = await promise.json()
+                document.getElementById("wall").innerHTML = wall
+            }
+            else 
+            {
+                document.body.innerHTML = promise.status
+            }
+        }
+        init()
+    </script>
+
+</html>

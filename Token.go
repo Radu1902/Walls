@@ -4,11 +4,12 @@ import "crypto/rand"
 
 type Token struct {
 	Username string
-	Secret   []byte
+	Secret   string
 }
 
 func (token *Token) generate(username string) {
 	token.Username = username
-	token.Secret = make([]byte, 8)
-	rand.Read(token.Secret)
+	randStr := make([]byte, 8)
+	rand.Read(randStr)
+	token.Secret = string(randStr)
 }

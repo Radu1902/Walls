@@ -77,17 +77,27 @@
             {
                 const username = document.getElementById("userInput").value
                 const password = document.getElementById("passInput").value
-                const credentials = username + " " + password
+                const credentials = { username, password }
                 const promise = await fetch("http://localhost:8080/auth", {
                     method: "POST",
-                    header: {
+                    headers: {
                         "Content-Type": "application/json"
                     },
                     body: JSON.stringify(credentials)
                 })
-                const text = await promise.text()
-                const json = await JSON.parse(texts)
-                document.getElementById("dspl").innerHTML = jsonny.Blog
+                if (promise.ok)
+                {
+                    const token = await promise.json()
+                    console.log(token)
+                    localStorage.setItem("token", token.body)
+                    //window.location.replace("http://localhost:8080/edit")
+
+                }
+                else
+                {
+                    document.getElementById("dspl").innerHTML = "Incorrect username or password"
+                }
+                
             }
             
             
