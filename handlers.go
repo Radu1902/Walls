@@ -5,18 +5,16 @@ import (
 	"fmt"
 	"net/http"
 	"reflect"
-	"strings"
 )
 
-var users []User = []User{{"ionut", "qwer", []byte("salut")}, {"mircea", "asdf", []byte("buna")}}
+var users []User = []User{{"ionut", "qwer", "salut"}, {"mircea", "asdf", "buna"}}
 var tokens map[string]string = make(map[string]string)
 
 func registerHandler(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
-	var body string
-	decoder.Decode(&body)
-	creds := strings.Fields(body)
-	newUser := User{creds[0], creds[1], []byte("")}
+	var credentials map[string]string
+	decoder.Decode(&credentials)
+	newUser := User{credentials["username"], credentials["password"], ""}
 	users = append(users, newUser)
 	// to do: db sync
 }
@@ -41,6 +39,9 @@ func authHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	if authSuccess {
+		fmt.Println(token.Secret)
+		fmt.Println(tokens)
+		fmt.Println(tokens[token.Secret])
 		encoder.Encode(token.Secret)
 	} else {
 		w.WriteHeader(http.StatusForbidden)
@@ -53,6 +54,7 @@ func getWall(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&secret)
 	fmt.Println(secret)
 	var sessionUser string = tokens[secret]
+	fmt.Println("sesh: ", sessionUser)
 	if sessionUser != "" {
 		for index := range users {
 			if sessionUser == users[index].Username {
@@ -63,12 +65,6 @@ func getWall(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusForbidden)
 	}
 
-}
-
-func getUser(w http.ResponseWriter, r *http.Request) {
-	usr := users[1]
-	fmt.Println(usr)
-	json.NewEncoder(w).Encode(usr)
 }
 
 func loginHandler(w http.ResponseWriter, r *http.Request) {

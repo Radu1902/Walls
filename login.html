@@ -56,12 +56,12 @@
         </div>
 
         <script>
-            function onRegister()
+            async function onRegister()
             {
                 const username = document.getElementById("userInput").value
                 const password = document.getElementById("passInput").value
-                const credentials = username + " " + password
-                let response = fetch("http://localhost:8080/register", {
+                const credentials = { username, password }
+                let response = await fetch("http://localhost:8080/register", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
@@ -69,6 +69,14 @@
                     body: JSON.stringify(credentials),
                 });
 
+                if (respone.ok)
+                {
+                    document.getElementById("dspl").innerHTML = "Registration successful"
+                }
+                else
+                {
+                    document.getElementById("dspl").innerHTML = "User already exists"
+                }
                 document.getElementById("dspl").innerHTML = response.ok
                 console.log(response)
                 console.log(credentials)
@@ -89,7 +97,9 @@
                 {
                     const token = await promise.json()
                     console.log(token)
-                    localStorage.setItem("token", token.body)
+                    localStorage.setItem("token", token)
+                    console.log(localStorage.getItem("token"))
+                    window.open("http://localhost:8080/edit")
                     //window.location.replace("http://localhost:8080/edit")
 
                 }

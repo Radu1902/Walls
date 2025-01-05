@@ -7,7 +7,6 @@ import (
 func main() {
 	http.HandleFunc("/login", loginHandler)
 	http.HandleFunc("/auth", authHandler)
-	http.HandleFunc("/user", getUser)
 	http.HandleFunc("/register", registerHandler)
 	http.HandleFunc("/edit", editHandler)
 	http.HandleFunc("/wall", getWall)
