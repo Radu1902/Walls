@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"reflect"
 )
 
 var users []User = []User{{"ionut", "qwer", "salut"}, {"mircea", "asdf", "buna"}}
@@ -23,8 +22,6 @@ func authHandler(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	var credentials map[string]string
 	decoder.Decode(&credentials)
-	fmt.Println(reflect.TypeOf(credentials))
-	fmt.Println(credentials["username"], credentials["password"])
 
 	encoder := json.NewEncoder(w)
 	var authSuccess bool = false
@@ -49,7 +46,7 @@ func authHandler(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func getWall(w http.ResponseWriter, r *http.Request) {
+func updateWallHandler(w http.ResponseWriter, r *http.Request) {
 	var secret string
 	json.NewDecoder(r.Body).Decode(&secret)
 	fmt.Println(secret)
@@ -64,7 +61,21 @@ func getWall(w http.ResponseWriter, r *http.Request) {
 	} else {
 		w.WriteHeader(http.StatusForbidden)
 	}
+}
 
+func getWall(w http.ResponseWriter, r *http.Request) {
+	username := r.URL.Path[len("/user/"):]
+	if username == "" {
+		http.NotFound(w, r)
+		return
+	}
+	for index := range users {
+		if username == users[index].Username {
+			json.NewEncoder(w).Encode(users[index].Wall)
+			return
+		}
+	}
+	http.NotFound(w, r)
 }
 
 func loginHandler(w http.ResponseWriter, r *http.Request) {
@@ -73,4 +84,8 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 
 func editHandler(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, "edit.html")
+}
+
+func searchHandler(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, "search.html")
 }
