@@ -3,35 +3,15 @@
         <title>Wall edit</title>
         <style>
             html {
-                line-height: 1.625;
-                color: "light gray";
                 font-family: 'Comic Sans MS';
-                display: table;
                 margin: auto;
             }
             body {
-                display: table-cell;
                 vertical-align: center;
             }
             div {
-                background-color: lightgray;
-                border: 3px solid black;
-                padding: 30px;
-                width: 300px;
-                margin: 30px;
+                text-align: center;
             }
-            label {
-                display: inline-block;
-                font-size: larger;
-                text-align: right;
-            }
-            input {
-                display: inline-block;
-            }
-            h1 {
-                color: multicolor;
-            }
-
 
         </style>
 
@@ -39,9 +19,11 @@
     </head>
 
     <body>
-        <h1 id="title">Edit wall</h1>
-        <div id="wall">
-
+        <div>
+            <h1 id="title">Edit wall</h1>
+            <textarea id="wall" onchange="enableConfirmer()" rows="50" cols="100"></textarea>
+            <br/>
+            <button id="confirmer" onclick="onConfirm()">Confirm changes</button>    
         </div>
 
     </body>
@@ -52,9 +34,6 @@
         {
             const promise = await fetch("http://localhost:8080/wall", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
                 body: JSON.stringify(localStorage.getItem("token"))
             })
             console.log(localStorage.getItem("token"))
@@ -65,8 +44,13 @@
             }
             else 
             {
-                document.body.innerHTML = promise.status
+                window.location.replace("http://localhost:8080/login")
             }
+            document.getElementById("confirmer").disabled = true
+        }
+        function enableConfirmer()
+        {
+            document.getElementById("confirmer").disabled = false
         }
         init()
     </script>

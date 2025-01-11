@@ -10,6 +10,8 @@ import (
 var users []User = []User{{"ionut", "qwer", "salut"}, {"mircea", "asdf", "buna"}}
 var tokens map[string]string = make(map[string]string)
 
+// to do: 69 the map
+
 func registerHandler(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	var credentials map[string]string
