@@ -9,14 +9,34 @@ import (
 var users []User = []User{{"ionut", "qwer", "salut"}, {"mircea", "asdf", "buna"}}
 var tokens map[string]string = make(map[string]string)
 
+func (database *Database) init() error {
+	userlist, err := database.db.Query("SELECT * FROM users")
+	if err != nil {
+		return err
+	}
+	fmt.Println(userlist)
+	return err
+}
+
 // to do: 69 the map
 
-func registerHandler(w http.ResponseWriter, r *http.Request) {
+func (database *Database) registerHandler(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	var credentials map[string]string
 	decoder.Decode(&credentials)
-	newUser := User{credentials["username"], credentials["password"], ""}
+
+	for _, user := range users {
+		if credentials["username"] == user.Username {
+			fmt.Println("Username already used")
+			w.WriteHeader(http.StatusConflict)
+			return
+		}
+	}
+
+	newUser := User{credentials["username"], credentials["password"], "Hello! this is my wall."}
 	users = append(users, newUser)
+	database.db.Query("INSERT INTO users (username, password, wall) VALUES (?, ?, ?)", newUser.Username, newUser.Password, newUser.Wall)
+
 	// to do: db sync
 }
 

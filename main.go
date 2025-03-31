@@ -8,6 +8,10 @@ import (
 	_ "github.com/glebarez/go-sqlite"
 )
 
+type Database struct {
+	db *sql.DB
+}
+
 func main() {
 	db, err := sql.Open("sqlite", "./users.db")
 
@@ -15,7 +19,7 @@ func main() {
 		fmt.Println(err)
 		return
 	} else {
-		_, err = db.Query("CREATE TABLE IF NOT EXISTS users ( username TEXT PRIMARY KEY, password TEXT NOT NULL, wall BLOB );")
+		_, err = db.Exec(`CREATE TABLE IF NOT EXISTS users ( username TEXT PRIMARY KEY, password TEXT NOT NULL, wall BLOB );`)
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -23,10 +27,16 @@ func main() {
 			fmt.Println("database instantiated successfully")
 		}
 	}
+	database := Database{db: db}
+	err = database.init()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 
 	http.HandleFunc("/login", loginHandler)
 	http.HandleFunc("/auth", authHandler)
-	http.HandleFunc("/register", registerHandler)
+	http.HandleFunc("/register", database.registerHandler)
 	http.HandleFunc("/edit", editHandler)
 	http.HandleFunc("/wall/", getWall)
 	http.HandleFunc("/update", updateWallHandler)

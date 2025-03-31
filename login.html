@@ -73,7 +73,7 @@
                 {
                     document.getElementById("dspl").innerHTML = "Registration successful"
                 }
-                else
+                else if (response.conflict)
                 {
                     document.getElementById("dspl").innerHTML = "User already exists"
                 }
